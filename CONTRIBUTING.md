@@ -4,6 +4,8 @@ Comment `claim` on an open issue that has no assignee. That assigns it to you. Y
 
 If there is no issue with your name on it, don't start. Small fixes for a typo or a broken seed are fine as a PR without an issue.
 
+Please star the repo.
+
 ## Setup
 
 You need Node 20, npm, and Docker. Then follow [Run](README.md#run) in the README.
