@@ -1,0 +1,78 @@
+name: Unassign stale claims
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  unassign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const HOURS_TO_OPEN_PR = 72;
+            const BOT = "github-actions[bot]";
+            const { owner, repo } = context.repo;
+            const now = Date.now();
+
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "open",
+              assignee: "*",
+              per_page: 100,
+            });
+
+            for (const issue of issues) {
+              if (issue.pull_request) continue;
+
+              const timeline = await github.paginate(github.rest.issues.listEventsForTimeline, {
+                owner,
+                repo,
+                issue_number: issue.number,
+                per_page: 100,
+              });
+
+              for (const { login } of issue.assignees) {
+                // Only claims the bot handed out expire. A maintainer's manual assignment is left alone.
+                const assigned = timeline
+                  .filter((event) => event.event === "assigned" && event.assignee?.login === login)
+                  .at(-1);
+                if (!assigned || assigned.actor?.login !== BOT) continue;
+
+                const hoursHeld = (now - Date.parse(assigned.created_at)) / 3_600_000;
+                if (hoursHeld < HOURS_TO_OPEN_PR) continue;
+
+                // An open or merged PR by the assignee that mentions this issue keeps the claim.
+                const hasPullRequest = timeline.some((event) => {
+                  if (event.event !== "cross-referenced") return false;
+                  const source = event.source?.issue;
+                  return (
+                    source?.pull_request != null &&
+                    source.user?.login === login &&
+                    (source.state === "open" || source.pull_request.merged_at != null)
+                  );
+                });
+                if (hasPullRequest) continue;
+
+                await github.rest.issues.removeAssignees({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  assignees: [login],
+                });
+
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  body: `@${login}, 72 hours passed without a pull request for this issue, so you have been unassigned. Anyone can comment \`claim\` to take it now.`,
+                });
+              }
+            }

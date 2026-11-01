@@ -15,9 +15,10 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const body = (context.payload.comment.body || "").trim().toLowerCase();
-            if (body !== "claim") return;
+            const command = (context.payload.comment.body || "").trim().toLowerCase();
+            if (command !== "claim" && command !== "unclaim") return;
 
+            const MAX_OPEN_CLAIMS = 5;
             const issueNumber = context.payload.issue.number;
             const commenter = context.payload.comment.user.login;
             const assignees = (context.payload.issue.assignees || []).map((user) => user.login);
@@ -31,6 +32,23 @@ jobs:
               });
             }
 
+            if (command === "unclaim") {
+              if (!assignees.includes(commenter)) {
+                await reply("You are not assigned to this issue.");
+                return;
+              }
+
+              await github.rest.issues.removeAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                assignees: [commenter],
+              });
+
+              await reply("You have been unassigned. Anyone can comment `claim` to take it now.");
+              return;
+            }
+
             if (assignees.includes(commenter)) {
               await reply("You already have this issue.");
               return;
@@ -38,6 +56,22 @@ jobs:
 
             if (assignees.length > 0) {
               await reply(`This issue is already assigned to @${assignees[0]}.`);
+              return;
+            }
+
+            const assignedToCommenter = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              assignee: commenter,
+              per_page: 100,
+            });
+            const openClaims = assignedToCommenter.filter((issue) => !issue.pull_request).length;
+
+            if (openClaims >= MAX_OPEN_CLAIMS) {
+              await reply(
+                `You already have ${MAX_OPEN_CLAIMS} open issues assigned. Finish one or comment \`unclaim\` on it before claiming another.`
+              );
               return;
             }
 
@@ -49,5 +83,5 @@ jobs:
             });
 
             await reply(
-              "Congratulations on getting this issue. Please raise a PR within 72 hours, and please star the repo."
+              `Congratulations on getting this issue. Please raise a PR that mentions #${issueNumber} within 72 hours, or you will be unassigned. And please star the repo.`
             );

@@ -6,7 +6,25 @@ I maintain this repo and open the issues. The behaviour that is already locked i
 
 There is no real mess behind the data. The seed is the mess.
 
+Live: https://messline.vercel.app. It runs `main` against the seed data.
+
+## Why
+
+A mess cooks before it knows who is coming. Plates run out for whoever is at the back of the line, and the rest gets thrown away when people skip. Messline makes students say in advance, so the kitchen cooks for a real count and the cutoff tells it when that count is final.
+
+## Stack
+
+Next.js 14 (App Router), TypeScript, Tailwind CSS, Prisma, PostgreSQL 16 in Docker, zod.
+
+## Where to start
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md), then [docs/rules.md](docs/rules.md). Pick an open issue with no assignee from [the issue list](https://github.com/sanjana2505006/Messline/issues).
+
+Messline is a [Winter of Code Social 2026](https://woc.codesocial.tech) project.
+
 ## Run
+
+You need Node 20 and Docker.
 
 ```bash
 cp .env.example .env
