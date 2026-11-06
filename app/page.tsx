@@ -10,6 +10,10 @@ function dayLabel(d: Date) {
   });
 }
 
+function mealLabel(meal: string) {
+  return meal.charAt(0).toUpperCase() + meal.slice(1).toLowerCase();
+}
+
 function priceLabel(included: boolean, priceRupees: number | null) {
   if (included) return "included";
   if (priceRupees == null) return "no price set";
@@ -65,7 +69,7 @@ export default async function Home() {
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-neutral-200">
                 <td className="py-2 pr-3">
-                  {dayLabel(row.service.serviceDate)} {row.service.meal.toLowerCase()}
+                  {dayLabel(row.service.serviceDate)} {mealLabel(row.service.meal)}
                 </td>
                 <td className="py-2 pr-3">{row.menuItem.name}</td>
                 <td className="py-2 pr-3">
