@@ -1,6 +1,6 @@
 # Contributing
 
-Comment `claim` on an open issue that has no assignee. That assigns it to you. You can hold up to 5 open issues at once. Comment `unclaim` to give one back. Open the PR within 72 hours and put the issue number on its `Issue:` line. If no PR of yours mentions the issue by then, the bot unassigns you.
+Comment `claim` on an open issue that has no assignee. That assigns it to you. You can hold up to 5 open issues at once. Comment `unclaim` to give one back. Open the PR within 72 hours and start its description with `Closes #<issue number>`, for example `Closes #7`. GitHub then closes the issue when the PR is merged. Writing only `#7` or `Issue: #7` links the issue but leaves it open. If no PR of yours mentions the issue by then, the bot unassigns you.
 
 If there is no issue with your name on it, don't start. Small fixes for a typo or a broken seed are fine as a PR without an issue.
 
