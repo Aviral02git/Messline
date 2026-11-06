@@ -4,6 +4,7 @@ import { hash } from "bcryptjs";
 const prisma = new PrismaClient();
 
 // Today lunch: biryani has 2 plates, cutoff is 2 hours from seed time.
+// Today breakfast: poha, 30 plates, included in the mess plan.
 // Yesterday lunch: sambar, cutoff already passed, so a complaint has a dish to attach to.
 
 function calendarDate(offsetDays: number) {
@@ -57,7 +58,7 @@ async function main() {
     ],
   });
 
-  const [thali, biryani, sambar] = await Promise.all([
+  const [thali, biryani, sambar, poha] = await Promise.all([
     prisma.menuItem.create({
       data: {
         name: "Veg thali",
@@ -83,7 +84,24 @@ async function main() {
         included: true,
       },
     }),
+    prisma.menuItem.create({
+      data: {
+        name: "Poha",
+        description: "Flattened rice cooked with onion, peanuts and turmeric.",
+        ingredients: "flattened rice, onion, peanuts, mustard seeds, curry leaves, turmeric, lemon, oil",
+        included: true,
+      },
+    }),
   ]);
+
+  const todayBreakfast = await prisma.service.create({
+    data: {
+      meal: Meal.BREAKFAST,
+      serviceDate: calendarDate(0),
+      cutoffAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      published: true,
+    },
+  });
 
   const todayLunch = await prisma.service.create({
     data: {
@@ -105,6 +123,12 @@ async function main() {
 
   await prisma.offering.createMany({
     data: [
+      {
+        serviceId: todayBreakfast.id,
+        menuItemId: poha.id,
+        quantityTotal: 30,
+        quantityLeft: 30,
+      },
       {
         serviceId: todayLunch.id,
         menuItemId: thali.id,
