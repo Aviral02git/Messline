@@ -4,6 +4,8 @@ Comment `claim` on an open issue that has no assignee. That assigns it to you. Y
 
 If there is no issue with your name on it, don't start. Small fixes for a typo or a broken seed are fine as a PR without an issue.
 
+Issues labelled `good first issue` are a good place to start if you are new here. Comment `claim` on the issue before you begin. If the issue already has an assignee, leave it and pick another one.
+
 Please star the repo.
 
 ## Setup
