@@ -56,7 +56,8 @@ export default async function Home() {
           Could not read Postgres. Check README for the docker and seed commands.
         </p>
       ) : (
-        <table className="mt-6 w-full border-collapse text-left text-sm">
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-neutral-300">
               <th className="py-2 pr-3 font-medium">When</th>
@@ -81,7 +82,8 @@ export default async function Home() {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       )}
     </main>
   );
