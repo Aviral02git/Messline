@@ -17,7 +17,7 @@ function mealLabel(meal: string) {
 function priceLabel(included: boolean, priceRupees: number | null) {
   if (included) return "included";
   if (priceRupees == null) return "no price set";
-  return `Rs ${priceRupees}`;
+  return `₹${priceRupees}`;
 }
 
 export default async function Home() {
