@@ -1,0 +1,28 @@
+name: Welcome pull request
+
+# pull_request_target runs with a token that can comment on PRs from forks.
+# It never checks out the PR's code, so nothing from the fork runs here.
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  welcome:
+    if: github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const author = context.payload.pull_request.user.login;
+            const { owner, repo } = context.repo;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: context.payload.pull_request.number,
+              body: `Thanks for the pull request, @${author}! A maintainer will review it soon. If you haven't already, please star the repo: https://github.com/${owner}/${repo}`,
+            });
