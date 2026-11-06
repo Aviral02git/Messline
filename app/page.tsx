@@ -2,7 +2,17 @@ import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+// serviceDate is stored as midnight UTC of the local day (same as calendarDate in prisma/seed.ts)
+function calendarDate(offsetDays: number) {
+  const now = new Date();
+  return new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + offsetDays),
+  );
+}
+
 function dayLabel(d: Date) {
+  if (d.getTime() === calendarDate(0).getTime()) return "Today";
+  if (d.getTime() === calendarDate(-1).getTime()) return "Yesterday";
   return d.toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
