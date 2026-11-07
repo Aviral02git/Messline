@@ -10,7 +10,18 @@ async function signOut() {
   clearSession();
   redirect("/");
 }
+
+// serviceDate is stored as midnight UTC of the local day (same as calendarDate in prisma/seed.ts)
+function calendarDate(offsetDays: number) {
+  const now = new Date();
+  return new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + offsetDays),
+  );
+}
+
 function dayLabel(d: Date) {
+  if (d.getTime() === calendarDate(0).getTime()) return "Today";
+  if (d.getTime() === calendarDate(-1).getTime()) return "Yesterday";
   return d.toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
@@ -18,10 +29,14 @@ function dayLabel(d: Date) {
   });
 }
 
+function mealLabel(meal: string) {
+  return meal.charAt(0).toUpperCase() + meal.slice(1).toLowerCase();
+}
+
 function priceLabel(included: boolean, priceRupees: number | null) {
   if (included) return "included";
   if (priceRupees == null) return "no price set";
-  return `Rs ${priceRupees}`;
+  return `₹${priceRupees}`;
 }
 
 export default async function Home() {
@@ -29,7 +44,12 @@ export default async function Home() {
     id: string;
     quantityLeft: number;
     quantityTotal: number;
-    menuItem: { name: string; included: boolean; priceRupees: number | null };
+    menuItem: {
+      name: string;
+      description: string;
+      included: boolean;
+      priceRupees: number | null;
+    };
     service: { meal: string; serviceDate: Date; cutoffAt: Date };
   }[] = [];
   let dbDown = false;
@@ -37,12 +57,26 @@ export default async function Home() {
 
   try {
     rows = await prisma.offering.findMany({
-      where: { service: { published: true } },
+      where: {
+        service: { published: true },
+        menuItem: { active: true },
+      },
       include: {
-        menuItem: { select: { name: true, included: true, priceRupees: true } },
+        menuItem: {
+          select: {
+            name: true,
+            description: true,
+            included: true,
+            priceRupees: true,
+          },
+        },
         service: { select: { meal: true, serviceDate: true, cutoffAt: true } },
       },
-      orderBy: [{ service: { serviceDate: "desc" } }, { menuItem: { name: "asc" } }],
+      orderBy: [
+        { service: { serviceDate: "desc" } },
+        { service: { meal: "asc" } },
+        { menuItem: { name: "asc" } },
+      ],
     });
   } catch {
     dbDown = true;
@@ -50,22 +84,21 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">Messline
-              <div className="mt-2 text-sm">
-                {user ? (
-                  <form action={signOut} className="flex items-center gap-3">
-                    <span>Signed in as {user.name}</span>
-                    <button type="submit" className="underline">
-                      Sign out
-                    </button>
-                  </form>
-                ) : (
-                  <Link href="/login" className="underline">
-                    Sign in
-                  </Link>
-                )}
-              </div>
-      </h1>
+      <h1 className="text-2xl font-semibold">Messline</h1>
+      <div className="mt-2 text-sm">
+        {user ? (
+          <form action={signOut} className="flex items-center gap-3">
+            <span>Signed in as {user.name}</span>
+            <button type="submit" className="underline">
+              Sign out
+            </button>
+          </form>
+        ) : (
+          <Link href="/login" className="underline">
+            Sign in
+          </Link>
+        )}
+      </div>
       <p className="mt-2 text-sm leading-6 text-neutral-700">
         This page only prints the seed so you can see the database is up. Booking,
         cancel, complaints, and reviews do not exist yet. Take a task from an issue.
@@ -76,7 +109,8 @@ export default async function Home() {
           Could not read Postgres. Check README for the docker and seed commands.
         </p>
       ) : (
-        <table className="mt-6 w-full border-collapse text-left text-sm">
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-neutral-300">
               <th className="py-2 pr-3 font-medium">When</th>
@@ -89,19 +123,30 @@ export default async function Home() {
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-neutral-200">
                 <td className="py-2 pr-3">
-                  {dayLabel(row.service.serviceDate)} {row.service.meal.toLowerCase()}
+                  {dayLabel(row.service.serviceDate)} {mealLabel(row.service.meal)}
                 </td>
-                <td className="py-2 pr-3">{row.menuItem.name}</td>
+                <td className="py-2 pr-3">
+                  <div>{row.menuItem.name}</div>
+                  {row.menuItem.description && (
+                    <div className="text-xs text-neutral-500">
+                      {row.menuItem.description}
+                    </div>
+                  )}
+                </td>
                 <td className="py-2 pr-3">
                   {priceLabel(row.menuItem.included, row.menuItem.priceRupees)}
                 </td>
                 <td className="py-2">
                   {row.quantityLeft} / {row.quantityTotal}
+                  {row.quantityLeft === 0 && (
+                    <span className="ml-2 text-neutral-500">sold out</span>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       )}
     </main>
   );
