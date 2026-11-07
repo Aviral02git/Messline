@@ -164,6 +164,23 @@ async function main() {
       },
     ],
   });
+    // Reviews from the two seeded students, at most one per student per dish.
+  // Veg thali has two, biryani and sambar have one, poha and boiled eggs have none.
+  const meera = await prisma.user.findUniqueOrThrow({
+    where: { email: "meera@messline.dev" },
+  });
+  const kabir = await prisma.user.findUniqueOrThrow({
+    where: { email: "kabir@messline.dev" },
+  });
+
+  await prisma.review.createMany({
+    data: [
+      { userId: meera.id, menuItemId: thali.id, stars: 5 },
+      { userId: kabir.id, menuItemId: thali.id, stars: 4 },
+      { userId: kabir.id, menuItemId: biryani.id, stars: 5 },
+      { userId: meera.id, menuItemId: sambar.id, stars: 2 },
+    ],
+  });
 }
 
 main()

@@ -30,9 +30,17 @@ function priceLabel(included: boolean, priceRupees: number | null) {
   return `₹${priceRupees}`;
 }
 
+type Rating = { average: number; count: number };
+
+function ratingLabel(rating: Rating | undefined) {
+  if (!rating || rating.count === 0) return "no reviews";
+  return `${rating.average.toFixed(1)} (${rating.count})`;
+}
+
 export default async function Home() {
   let rows: {
     id: string;
+    menuItemId: string;
     quantityLeft: number;
     quantityTotal: number;
     menuItem: {
@@ -43,6 +51,7 @@ export default async function Home() {
     };
     service: { meal: string; serviceDate: Date; cutoffAt: Date };
   }[] = [];
+  const ratings = new Map<string, Rating>();
   let dbDown = false;
 
   try {
@@ -68,6 +77,22 @@ export default async function Home() {
         { menuItem: { name: "asc" } },
       ],
     });
+
+    // The database does the averaging, so no review rows are loaded.
+    const grouped = await prisma.review.groupBy({
+      by: ["menuItemId"],
+      where: { menuItemId: { in: rows.map((row) => row.menuItemId) } },
+      _avg: { stars: true },
+      _count: { stars: true },
+    });
+    for (const group of grouped) {
+      if (group._avg.stars != null) {
+        ratings.set(group.menuItemId, {
+          average: group._avg.stars,
+          count: group._count.stars,
+        });
+      }
+    }
   } catch {
     dbDown = true;
   }
@@ -92,6 +117,7 @@ export default async function Home() {
               <th className="py-2 pr-3 font-medium">When</th>
               <th className="py-2 pr-3 font-medium">Item</th>
               <th className="py-2 pr-3 font-medium">Price</th>
+              <th className="py-2 pr-3 font-medium">Rating</th>
               <th className="py-2 font-medium">Left</th>
             </tr>
           </thead>
@@ -111,6 +137,9 @@ export default async function Home() {
                 </td>
                 <td className="py-2 pr-3">
                   {priceLabel(row.menuItem.included, row.menuItem.priceRupees)}
+                </td>
+                <td className="py-2 pr-3">
+                  {ratingLabel(ratings.get(row.menuItemId))}
                 </td>
                 <td className="py-2">
                   {row.quantityLeft} / {row.quantityTotal}
