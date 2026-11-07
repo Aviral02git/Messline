@@ -114,6 +114,9 @@ export default async function Home() {
                 </td>
                 <td className="py-2">
                   {row.quantityLeft} / {row.quantityTotal}
+                  {row.quantityLeft === 0 && (
+                    <span className="ml-2 text-neutral-500">sold out</span>
+                  )}
                 </td>
               </tr>
             ))}
