@@ -49,7 +49,7 @@ You can use AI tools on this project.
 
 Messline is a Winter of Code Social 2026 project. Register at https://woc.codesocial.tech, or your merged PRs won't earn points.
 
-Before I merge your PR, I or a mentor add `wocs` and one level label. The level is our call, and it is final once the PR is merged.
+When you open a PR that closes an issue, the bot copies that issue's labels, including `wocs` and its level, onto the PR. I or a mentor can change the level before merging. The level is our call, and it is final once the PR is merged.
 
 - `level 1`: small, beginner-friendly change. 2 points.
 - `level 2`: more implementation or understanding. 5 points.
