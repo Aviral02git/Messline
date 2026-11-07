@@ -32,7 +32,10 @@ export default async function Home() {
 
   try {
     rows = await prisma.offering.findMany({
-      where: { service: { published: true } },
+      where: {
+        service: { published: true },
+        menuItem: { active: true },
+      },
       include: {
         menuItem: { select: { name: true, included: true, priceRupees: true } },
         service: { select: { meal: true, serviceDate: true, cutoffAt: true } },
