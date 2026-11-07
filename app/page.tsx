@@ -112,7 +112,7 @@ export default async function Home() {
       <div className="mt-2 text-sm">
         {user ? (
           <form action={signOut} className="flex items-center gap-3">
-            <span>Signed in as {user.name}</span>
+            <span>Signed in as {user.name} ({user.role.toLowerCase()})</span>
             <button type="submit" className="underline">
               Sign out
             </button>
