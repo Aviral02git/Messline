@@ -10,7 +10,6 @@ async function signOut() {
   clearSession();
   redirect("/");
 }
-
 // serviceDate is stored as midnight UTC of the local day (same as calendarDate in prisma/seed.ts)
 function calendarDate(offsetDays: number) {
   const now = new Date();
