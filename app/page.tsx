@@ -1,7 +1,15 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { clearSession, getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+async function signOut() {
+  "use server";
+  clearSession();
+  redirect("/");
+}
 // serviceDate is stored as midnight UTC of the local day (same as calendarDate in prisma/seed.ts)
 function calendarDate(offsetDays: number) {
   const now = new Date();
@@ -53,6 +61,7 @@ export default async function Home() {
   }[] = [];
   const ratings = new Map<string, Rating>();
   let dbDown = false;
+  const user = await getCurrentUser();
 
   try {
     rows = await prisma.offering.findMany({
@@ -100,6 +109,20 @@ export default async function Home() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="text-2xl font-semibold">Messline</h1>
+      <div className="mt-2 text-sm">
+        {user ? (
+          <form action={signOut} className="flex items-center gap-3">
+            <span>Signed in as {user.name}</span>
+            <button type="submit" className="underline">
+              Sign out
+            </button>
+          </form>
+        ) : (
+          <Link href="/login" className="underline">
+            Sign in
+          </Link>
+        )}
+      </div>
       <p className="mt-2 text-sm leading-6 text-neutral-700">
         This page only prints the seed so you can see the database is up. Booking,
         cancel, complaints, and reviews do not exist yet. Take a task from an issue.
