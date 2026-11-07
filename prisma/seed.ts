@@ -4,7 +4,7 @@ import { hash } from "bcryptjs";
 const prisma = new PrismaClient();
 
 // Today lunch: biryani has 2 plates, cutoff is 2 hours from seed time.
-// Today breakfast: poha, 30 plates, included in the mess plan.
+// Today breakfast: poha, 30 plates, included in the mess plan; boiled eggs, 10 plates, extra (Rs 20).
 // Yesterday lunch: sambar, cutoff already passed, so a complaint has a dish to attach to.
 
 function calendarDate(offsetDays: number) {
@@ -58,7 +58,7 @@ async function main() {
     ],
   });
 
-  const [thali, biryani, sambar, poha] = await Promise.all([
+  const [thali, biryani, sambar, poha, boiledEggs] = await Promise.all([
     prisma.menuItem.create({
       data: {
         name: "Veg thali",
@@ -90,6 +90,15 @@ async function main() {
         description: "Flattened rice cooked with onion, peanuts and turmeric.",
         ingredients: "flattened rice, onion, peanuts, mustard seeds, curry leaves, turmeric, lemon, oil",
         included: true,
+      },
+    }),
+    prisma.menuItem.create({
+      data: {
+        name: "Boiled eggs",
+        description: "Two hard-boiled eggs with black pepper and salt.",
+        ingredients: "eggs, salt, black pepper",
+        included: false,
+        priceRupees: 20,
       },
     }),
   ]);
@@ -128,6 +137,12 @@ async function main() {
         menuItemId: poha.id,
         quantityTotal: 30,
         quantityLeft: 30,
+      },
+      {
+        serviceId: todayBreakfast.id,
+        menuItemId: boiledEggs.id,
+        quantityTotal: 10,
+        quantityLeft: 10,
       },
       {
         serviceId: todayLunch.id,
