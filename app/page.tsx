@@ -37,7 +37,11 @@ export default async function Home() {
         menuItem: { select: { name: true, included: true, priceRupees: true } },
         service: { select: { meal: true, serviceDate: true, cutoffAt: true } },
       },
-      orderBy: [{ service: { serviceDate: "desc" } }, { menuItem: { name: "asc" } }],
+      orderBy: [
+        { service: { serviceDate: "desc" } },
+        { service: { meal: "asc" } },
+        { menuItem: { name: "asc" } },
+      ],
     });
   } catch {
     dbDown = true;
