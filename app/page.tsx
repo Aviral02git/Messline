@@ -109,6 +109,8 @@ export default async function Home() {
         <p className="mt-6 text-sm">
           Could not read Postgres. Check README for the docker and seed commands.
         </p>
+      ) : rows.length === 0 ? (
+        <p className="mt-6 text-sm">No published offerings found.</p>
       ) : (
         <div className="mt-6 overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
