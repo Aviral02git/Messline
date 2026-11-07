@@ -35,7 +35,12 @@ export default async function Home() {
     id: string;
     quantityLeft: number;
     quantityTotal: number;
-    menuItem: { name: string; included: boolean; priceRupees: number | null };
+    menuItem: {
+      name: string;
+      description: string;
+      included: boolean;
+      priceRupees: number | null;
+    };
     service: { meal: string; serviceDate: Date; cutoffAt: Date };
   }[] = [];
   let dbDown = false;
@@ -47,7 +52,14 @@ export default async function Home() {
         menuItem: { active: true },
       },
       include: {
-        menuItem: { select: { name: true, included: true, priceRupees: true } },
+        menuItem: {
+          select: {
+            name: true,
+            description: true,
+            included: true,
+            priceRupees: true,
+          },
+        },
         service: { select: { meal: true, serviceDate: true, cutoffAt: true } },
       },
       orderBy: [
@@ -89,7 +101,14 @@ export default async function Home() {
                 <td className="py-2 pr-3">
                   {dayLabel(row.service.serviceDate)} {mealLabel(row.service.meal)}
                 </td>
-                <td className="py-2 pr-3">{row.menuItem.name}</td>
+                <td className="py-2 pr-3">
+                  <div>{row.menuItem.name}</div>
+                  {row.menuItem.description && (
+                    <div className="text-xs text-neutral-500">
+                      {row.menuItem.description}
+                    </div>
+                  )}
+                </td>
                 <td className="py-2 pr-3">
                   {priceLabel(row.menuItem.included, row.menuItem.priceRupees)}
                 </td>
