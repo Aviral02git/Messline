@@ -1,15 +1,13 @@
-import { BookingStatus, PrismaClient } from "@prisma/client";
-import { CancelBookingError, cancelBooking } from "../lib/booking";
+import { BookingStatus } from "@prisma/client";
+import { prisma } from "../lib/db";
+import { bookPlates, cancelBooking, CancelBookingError } from "../lib/booking";
 
 // Shows the cancel rules from docs/rules.md against the seed data.
 // Run after `npm run db:reset`:
 //   npx tsx scripts/cancel-booking.ts
 //
-// bookPlates is not part of this issue, so this script makes its own bookings
-// with the same conditional update the rules describe. Swap `book` for
-// bookPlates once that lands.
-
-const prisma = new PrismaClient();
+// Bookings are made with bookPlates, so this also exercises the real
+// booking path. Cutoff times are moved by hand to show both cancel cases.
 
 let failures = 0;
 
@@ -19,15 +17,9 @@ function check(label: string, ok: boolean, detail = "") {
 }
 
 async function book(userId: string, offeringId: string, count: number) {
-    return prisma.$transaction(async (tx) => {
-        const updated = await tx.$executeRaw`
-      UPDATE "Offering"
-      SET "quantityLeft" = "quantityLeft" - ${count}
-      WHERE id = ${offeringId} AND "quantityLeft" >= ${count}
-    `;
-        if (updated === 0) throw new Error("sold out");
-        return tx.booking.create({ data: { userId, offeringId, count } });
-    });
+    const result = await bookPlates(userId, offeringId, count);
+    if (!result.ok) throw new Error(`booking failed: ${result.reason}`);
+    return { id: result.bookingId };
 }
 
 async function quantityLeft(offeringId: string) {
@@ -152,3 +144,4 @@ main()
     .finally(async () => {
         await prisma.$disconnect();
     });
+    
