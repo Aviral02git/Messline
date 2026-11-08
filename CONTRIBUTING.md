@@ -22,6 +22,7 @@ Branch off `main`. One issue per PR.
 
 ```bash
 npm run lint
+npm run typecheck
 npm run build
 ```
 
