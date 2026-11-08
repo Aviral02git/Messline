@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { compare } from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { createSession, getCurrentUser } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "Sign in | Messline",
+};
 
 const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
