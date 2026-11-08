@@ -56,6 +56,8 @@ Today's breakfast has poha (30 plates, included in the plan). Today's lunch has 
 
 `npm run db:reset` wipes the database and seeds again. `npm run db:studio` opens Prisma Studio if you want to move a cutoff by hand.
 
+`npm run race:booking` fires two bookings at the last biryani plates at the same time. Run `npm run db:reset` first, and it should print `PASS`.
+
 ## CI
 
 Pull requests run lint, `prisma validate`, and a production build. That check has to pass.
