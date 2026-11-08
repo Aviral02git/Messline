@@ -171,6 +171,9 @@ export default async function Home() {
                   {row.quantityLeft === 0 && (
                     <span className="ml-2 text-neutral-500">sold out</span>
                   )}
+                  {row.quantityLeft > 0 && row.quantityLeft <= 5 && (
+                    <span className="ml-2 text-neutral-500">few left</span>
+                  )}
                 </td>
               </tr>
             ))}
