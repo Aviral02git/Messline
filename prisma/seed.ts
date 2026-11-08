@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 // Today lunch: biryani has 2 plates, cutoff is 2 hours from seed time.
 // Today breakfast: poha, 30 plates, included in the mess plan; boiled eggs, 10 plates, extra (Rs 20).
 // Yesterday lunch: sambar, cutoff already passed, so a complaint has a dish to attach to.
+// Reviews: veg thali has two, biryani and sambar have one, poha and boiled eggs have none.
 
 function calendarDate(offsetDays: number) {
   const now = new Date();
@@ -164,7 +165,7 @@ async function main() {
       },
     ],
   });
-    // Reviews from the two seeded students, at most one per student per dish.
+  // Reviews from the two seeded students, at most one per student per dish.
   // Veg thali has two, biryani and sambar have one, poha and boiled eggs have none.
   const meera = await prisma.user.findUniqueOrThrow({
     where: { email: "meera@messline.dev" },
