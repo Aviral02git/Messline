@@ -124,8 +124,8 @@ export default async function Home() {
         )}
       </div>
       <p className="mt-2 text-sm leading-6 text-neutral-700">
-        This page only prints the seed so you can see the database is up. Booking,
-        cancel, complaints, and reviews do not exist yet. Take a task from an issue.
+        Sign-in and ratings work. Booking, cancel, and complaints don&apos;t have
+        a page yet. Take a task from an issue.
       </p>
 
       {dbDown ? (
