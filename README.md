@@ -52,7 +52,7 @@ Passwords are hashed. Sign-in is not built, so these do nothing until that issue
 | kitchen | kitchen@messline.dev | kitchen123 |
 | secretary | secretary@messline.dev | secretary123 |
 
-Today's breakfast has poha (30 plates, included in the plan). Today's lunch has veg thali (40 plates, included) and chicken biryani (2 plates, Rs 90). Cutoff is two hours after you ran the seed. Yesterday's lunch is sambar, cutoff already passed, quantity 0. That row is there so a complaint has a dish to point at.
+Today's breakfast has poha (30 plates, included in the plan) and boiled eggs (10 plates, ₹20). Today's lunch has veg thali (40 plates, included) and chicken biryani (2 plates, ₹90). Cutoff is two hours after you ran the seed. Yesterday's lunch is sambar, cutoff already passed, quantity 0. That row is there so a complaint has a dish to point at. Meera and Kabir have reviewed veg thali, biryani and sambar.
 
 `npm run db:reset` wipes the database and seeds again. `npm run db:studio` opens Prisma Studio if you want to move a cutoff by hand.
 
