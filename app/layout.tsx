@@ -29,6 +29,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             >
               Rules
             </a>
+            <a
+              href="https://github.com/sanjana2505006/Messline/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Contributing
+            </a>
           </div>
         </footer>
       </body>
