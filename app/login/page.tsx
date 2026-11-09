@@ -40,12 +40,15 @@ export default async function LoginPage({
 }) {
   if (await getCurrentUser()) redirect("/");
 
+  const hasError = Boolean(searchParams.error);
+  const errorId = "signin-error";
+
   return (
     <main className="mx-auto max-w-sm px-6 py-10">
       <h1 className="text-2xl font-semibold">Sign in</h1>
 
       {searchParams.error ? (
-        <p role="alert" className="mt-4 text-sm text-red-700">
+        <p id={errorId} role="alert" className="mt-4 text-sm text-red-700">
           Wrong email or password.
         </p>
       ) : null}
@@ -58,6 +61,8 @@ export default async function LoginPage({
             type="email"
             required
             autoComplete="email"
+            aria-invalid={hasError ? "true" : undefined}
+            aria-describedby={hasError ? errorId : undefined}
             className="mt-1 w-full rounded border border-neutral-300 px-3 py-2"
           />
         </label>
@@ -68,6 +73,8 @@ export default async function LoginPage({
             type="password"
             required
             autoComplete="current-password"
+            aria-invalid={hasError ? "true" : undefined}
+            aria-describedby={hasError ? errorId : undefined}
             className="mt-1 w-full rounded border border-neutral-300 px-3 py-2"
           />
         </label>
