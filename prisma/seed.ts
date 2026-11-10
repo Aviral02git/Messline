@@ -1,4 +1,4 @@
-import { Meal, PrismaClient, Role } from "@prisma/client";
+import { ComplaintStatus, Meal, PrismaClient, Role } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 // Today lunch: biryani has 2 plates, cutoff is 2 hours from seed time.
 // Today breakfast: poha, 30 plates, included in the mess plan; boiled eggs, 10 plates, extra (Rs 20).
 // Yesterday lunch: sambar, cutoff already passed, so a complaint has a dish to attach to.
+// Complaints: Meera has one open complaint about yesterday's sambar.
 // Reviews: veg thali has two, biryani and sambar have one, poha and boiled eggs have none.
 
 function calendarDate(offsetDays: number) {
@@ -181,6 +182,16 @@ async function main() {
       { userId: kabir.id, menuItemId: biryani.id, stars: 5 },
       { userId: meera.id, menuItemId: sambar.id, stars: 2 },
     ],
+  });
+
+  await prisma.complaint.create({
+    data: {
+      userId: meera.id,
+      menuItemId: sambar.id,
+      serviceId: yesterdayLunch.id,
+      body: "Sambar was cold and too watery.",
+      status: ComplaintStatus.OPEN,
+    },
   });
 }
 
