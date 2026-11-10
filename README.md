@@ -24,7 +24,7 @@ Messline is a [Winter of Code Social 2026](https://woc.codesocial.tech) project.
 
 ## Run
 
-You need Node 20 and Docker.
+You need Node 20 and Docker. You can run `nvm use`.
 
 ```bash
 cp .env.example .env
