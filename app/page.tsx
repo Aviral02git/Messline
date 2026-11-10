@@ -153,7 +153,14 @@ export default async function Home() {
                   {dayLabel(row.service.serviceDate)} {mealLabel(row.service.meal)}
                 </td>
                 <td className="py-2 pr-3">
-                  <div>{row.menuItem.name}</div>
+                  <div>
+                    <Link
+                      href={`/dishes/${row.menuItemId}`}
+                      className="hover:underline"
+                    >
+                      {row.menuItem.name}
+                    </Link>
+                  </div>
                   {row.menuItem.description && (
                     <div className="text-xs text-neutral-500">
                       {row.menuItem.description}
