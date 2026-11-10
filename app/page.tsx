@@ -142,13 +142,14 @@ export default async function Home() {
       ) : (
         <div className="mt-6 overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
+            <caption className="sr-only">Menu</caption>
           <thead>
             <tr className="border-b border-neutral-300">
-              <th className="py-2 pr-3 font-medium">When</th>
-              <th className="py-2 pr-3 font-medium">Item</th>
-              <th className="py-2 pr-3 font-medium">Price</th>
-              <th className="py-2 pr-3 font-medium">Rating</th>
-              <th className="py-2 font-medium">Left</th>
+              <th scope="col" className="py-2 pr-3 font-medium">When</th>
+              <th scope="col" className="py-2 pr-3 font-medium">Item</th>
+              <th scope="col" className="py-2 pr-3 font-medium">Price</th>
+              <th scope="col" className="py-2 pr-3 font-medium">Rating</th>
+              <th scope="col" className="py-2 font-medium">Left</th>
             </tr>
           </thead>
           <tbody>
