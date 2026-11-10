@@ -4,6 +4,7 @@ import { hash } from "bcryptjs";
 const prisma = new PrismaClient();
 
 // Today lunch: biryani has 2 plates, cutoff is 2 hours from seed time.
+// Today dinner: rajma chawal, 35 plates, included in the mess plan, cutoff is 8 hours from seed time.
 // Today breakfast: poha, 30 plates, included in the mess plan; boiled eggs, 10 plates, extra (Rs 20).
 // Yesterday lunch: sambar, cutoff already passed, so a complaint has a dish to attach to.
 // Reviews: veg thali has two, biryani and sambar have one, poha and boiled eggs have none.
@@ -59,7 +60,7 @@ async function main() {
     ],
   });
 
-  const [thali, biryani, sambar, poha, boiledEggs] = await Promise.all([
+  const [thali, biryani, sambar, poha, boiledEggs, rajmaChawal] = await Promise.all([
     prisma.menuItem.create({
       data: {
         name: "Veg thali",
@@ -102,6 +103,14 @@ async function main() {
         priceRupees: 20,
       },
     }),
+    prisma.menuItem.create({
+      data: {
+        name: "Rajma chawal",
+        description: "Red kidney beans in spiced gravy served with steamed basmati rice.",
+        ingredients: "kidney beans, basmati rice, onion, tomato, ginger, garlic, garam masala, salt, oil",
+        included: true,
+      },
+    }),
   ]);
 
   const todayBreakfast = await prisma.service.create({
@@ -118,6 +127,15 @@ async function main() {
       meal: Meal.LUNCH,
       serviceDate: calendarDate(0),
       cutoffAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      published: true,
+    },
+  });
+
+  const todayDinner = await prisma.service.create({
+    data: {
+      meal: Meal.DINNER,
+      serviceDate: calendarDate(0),
+      cutoffAt: new Date(Date.now() + 8 * 60 * 60 * 1000),
       published: true,
     },
   });
@@ -156,6 +174,12 @@ async function main() {
         menuItemId: biryani.id,
         quantityTotal: 2,
         quantityLeft: 2,
+      },
+      {
+        serviceId: todayDinner.id,
+        menuItemId: rajmaChawal.id,
+        quantityTotal: 35,
+        quantityLeft: 35,
       },
       {
         serviceId: yesterdayLunch.id,
