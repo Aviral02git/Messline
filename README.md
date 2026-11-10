@@ -58,6 +58,8 @@ Today's breakfast has poha (30 plates, included in the plan) and boiled eggs (10
 
 `npm run race:booking` fires two bookings at the last biryani plates at the same time. Run `npm run db:reset` first, and it should print `PASS`.
 
+`npm run cancel:booking` checks the cancel rules against the seed data, so run `npm run db:reset` first and every line should say `PASS`.
+
 ## CI
 
 Pull requests run lint, `prisma validate`, and a production build. That check has to pass.

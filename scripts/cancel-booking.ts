@@ -4,7 +4,7 @@ import { bookPlates, cancelBooking, CancelBookingError } from "../lib/booking";
 
 // Shows the cancel rules from docs/rules.md against the seed data.
 // Run after `npm run db:reset`:
-//   npx tsx scripts/cancel-booking.ts
+//   npm run cancel:booking
 //
 // Bookings are made with bookPlates, so this also exercises the real
 // booking path. Cutoff times are moved by hand to show both cancel cases.
