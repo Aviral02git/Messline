@@ -16,6 +16,14 @@ A mess cooks before it knows who is coming. Plates run out for whoever is at the
 
 Next.js 14 (App Router), TypeScript, Tailwind CSS, Prisma, PostgreSQL 16 in Docker, zod.
 
+## Project structure
+
+- `app/` Next.js App Router pages, layouts, and routes
+- `lib/` shared utilities, database client, and business logic
+- `prisma/` schema, migrations and seed
+- `docs/` rules and project documentation
+- `.github/` CI workflows and issue/PR templates
+
 ## Where to start
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md), then [docs/rules.md](docs/rules.md). Pick an open issue with no assignee from [the issue list](https://github.com/sanjana2505006/Messline/issues).
