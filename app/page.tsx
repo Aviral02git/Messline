@@ -113,6 +113,11 @@ export default async function Home() {
         {user ? (
           <form action={signOut} className="flex items-center gap-3">
             <span>Signed in as {user.name} ({user.role.toLowerCase()})</span>
+            {user.role === "STUDENT" && (
+              <Link href="/bookings" className="underline">
+                My bookings
+              </Link>
+            )}
             <button type="submit" className="underline">
               Sign out
             </button>
@@ -124,8 +129,8 @@ export default async function Home() {
         )}
       </div>
       <p className="mt-2 text-sm leading-6 text-neutral-700">
-        Sign-in and ratings work. Booking, cancel, and complaints don&apos;t have
-        a page yet. Take a task from an issue.
+        Sign-in and ratings work. Creating bookings and complaints don&apos;t have a
+        page yet. Take a task from an issue.
       </p>
 
       {dbDown ? (
